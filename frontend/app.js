@@ -12,6 +12,7 @@ const panels = {
 };
 
 let currentSessionId = null;
+let debugSent = false;
 
 function switchTab(tab) {
   tabs.forEach((btn) => btn.classList.toggle("active", btn.dataset.tab === tab));
@@ -29,9 +30,9 @@ function getInitData() {
   return window.Telegram.WebApp.initData;
 }
 
-function showDebugInfo() {
+function showDebugInfo(force = false) {
   const params = new URLSearchParams(window.location.search);
-  if (!params.has("debug")) {
+  if (!force && !params.has("debug")) {
     return;
   }
   const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -43,9 +44,14 @@ function showDebugInfo() {
     initDataLength: tg && tg.initData ? tg.initData.length : 0,
     initDataUnsafe: tg && tg.initDataUnsafe ? Object.keys(tg.initDataUnsafe) : [],
     location: window.location.href,
+    userAgent: navigator.userAgent,
   };
   debugEl.textContent = JSON.stringify(info, null, 2);
   debugEl.classList.remove("hidden");
+  if (tg && typeof tg.sendData === "function" && !debugSent) {
+    tg.sendData(JSON.stringify({ type: "debug", info }));
+    debugSent = true;
+  }
 }
 
 async function api(path, options = {}) {
@@ -128,7 +134,7 @@ async function init() {
     if (!initData) {
       warningEl.textContent = "Открой приложение внутри Telegram, чтобы начать игру.";
       warningEl.classList.remove("hidden");
-      showDebugInfo();
+      showDebugInfo(true);
       return;
     }
     await loadProfile();
@@ -137,7 +143,7 @@ async function init() {
   } catch (err) {
     warningEl.textContent = "Ошибка загрузки. Проверь, что бот активирован через /start.";
     warningEl.classList.remove("hidden");
-    showDebugInfo();
+    showDebugInfo(true);
   }
 }
 

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 from contextlib import contextmanager
 from typing import Iterable
@@ -125,6 +126,21 @@ async def start_handler(message):
         "Привет! Нажми кнопку ниже, чтобы открыть мини-приложение.",
         reply_markup=keyboard,
     )
+
+
+@dp.message(lambda message: message.web_app_data is not None)
+async def webapp_data_handler(message):
+    raw = message.web_app_data.data
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        payload = {"raw": raw}
+
+    text = json.dumps(payload, indent=2, ensure_ascii=False)
+    if len(text) > 3500:
+        text = text[:3500] + "...(truncated)"
+
+    await message.answer(f"WebApp debug:\n{text}")
 
 
 async def process_sessions():
