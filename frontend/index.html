@@ -8,10 +8,36 @@
   </head>
   <body>
     <main class="page">
-      <h1>Telegram Mini App</h1>
-      <p id="status">Проверяем API...</p>
-      <button id="ping">Проверить API</button>
+      <header class="header">
+        <h1>Basketball</h1>
+        <p class="subtitle">Мини-игра в Telegram</p>
+      </header>
+
+      <nav class="nav">
+        <button class="tab active" data-tab="play">Игра</button>
+        <button class="tab" data-tab="leaderboard">Лидерборд</button>
+        <button class="tab" data-tab="profile">Профиль</button>
+      </nav>
+
+      <section class="panel" id="tab-play">
+        <h2>Выберите режим</h2>
+        <div id="modes" class="modes"></div>
+        <div id="play-status" class="status"></div>
+      </section>
+
+      <section class="panel hidden" id="tab-leaderboard">
+        <h2>Лидерборд</h2>
+        <p class="muted">Скоро будет доступно.</p>
+      </section>
+
+      <section class="panel hidden" id="tab-profile">
+        <h2>Профиль</h2>
+        <div id="profile" class="profile"></div>
+      </section>
+
+      <p id="warning" class="warning hidden"></p>
     </main>
+
     <script src="app.js"></script>
   </body>
 </html>
