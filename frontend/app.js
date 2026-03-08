@@ -65,7 +65,8 @@ async function api(path, options = {}) {
   const res = await fetch(`/api${path}`, { ...options, headers });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text || "API_ERROR");
+    const msg = text ? `${res.status} ${text}` : `HTTP_${res.status}`;
+    throw new Error(msg);
   }
   return res.json();
 }
@@ -141,7 +142,7 @@ async function init() {
     await loadModes();
     showDebugInfo();
   } catch (err) {
-    warningEl.textContent = "Ошибка загрузки. Проверь, что бот активирован через /start.";
+    warningEl.textContent = `Ошибка загрузки: ${err.message}. Проверь, что бот активирован через /start.`;
     warningEl.classList.remove("hidden");
     showDebugInfo(true);
   }
