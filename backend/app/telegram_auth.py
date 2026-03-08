@@ -26,7 +26,6 @@ def verify_init_data(init_data: str, max_age_seconds: int = 86400) -> Dict[str, 
         raise TelegramAuthError("initData hash missing")
 
     received_hash = data.pop("hash")
-    data.pop("signature", None)
 
     auth_date_str = data.get("auth_date")
     if not auth_date_str:
